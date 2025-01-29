@@ -1,10 +1,10 @@
 ﻿#ifndef AVL_TREE_H
 #define AVL_TREE_H
 
-#include <D:\vinic\OneDrive\Documentos\UFV\Algorítimos e Estruturas de Dados\projeto2025\AVLSimulator\allegro\include\allegro5\allegro5.h>
-#include <D:\vinic\OneDrive\Documentos\UFV\Algorítimos e Estruturas de Dados\projeto2025\AVLSimulator\allegro\include\allegro5\allegro_primitives.h>
-#include <D:\vinic\OneDrive\Documentos\UFV\Algorítimos e Estruturas de Dados\projeto2025\AVLSimulator\allegro\include\allegro5\allegro_font.h>
-#include <D:\vinic\OneDrive\Documentos\UFV\Algorítimos e Estruturas de Dados\projeto2025\AVLSimulator\allegro\include\allegro5\allegro_ttf.h>
+#include <allegro5/allegro5.h>
+#include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
 #include <stdbool.h>
 #include <math.h>
 #include <stdio.h>

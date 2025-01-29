@@ -62,6 +62,7 @@
     "allegro_font.h": "c",
     "allegro_ttf.h": "c",
     "allegro5.h": "c",
-    "avl-tree.h": "c"
+    "avl-tree.h": "c",
+    "stdio.h": "c"
   }
 }

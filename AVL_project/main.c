@@ -30,7 +30,7 @@ void drawTextOnScreen(const char* text, int y, ALLEGRO_FONT* font) {
 
 int main() {
     // Inicializa o Allegro e seus addons
-    if (!al_init()) {
+    if (!al_install_system(ALLEGRO_VERSION_INT, NULL)) {
         fprintf(stderr, "Erro ao inicializar o Allegro.\n");
         return -1;
     }

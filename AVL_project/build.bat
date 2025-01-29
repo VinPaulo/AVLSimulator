@@ -9,7 +9,7 @@ main.c avl-tree.c allegro-functions.c ^
 -I"include" ^
 -I"%ALLEGRO_PATH%/include" ^
 -L"%ALLEGRO_PATH%/lib" ^
--lallegro_monolith
+-lallegro -lallegro_primitives -lallegro_font -lallegro_ttf -lallegro_main
 
 if %ERRORLEVEL% EQU 0 (
     echo Build successful
