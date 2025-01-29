@@ -1,20 +1,21 @@
 ﻿#ifndef AVL_TREE_H
 #define AVL_TREE_H
 
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_primitives.h>
-#include <allegro5/allegro_font.h>
-#include <allegro5/allegro_ttf.h>
+#include <D:\vinic\OneDrive\Documentos\UFV\Algorítimos e Estruturas de Dados\projeto2025\AVLSimulator\allegro\include\allegro5\allegro5.h>
+#include <D:\vinic\OneDrive\Documentos\UFV\Algorítimos e Estruturas de Dados\projeto2025\AVLSimulator\allegro\include\allegro5\allegro_primitives.h>
+#include <D:\vinic\OneDrive\Documentos\UFV\Algorítimos e Estruturas de Dados\projeto2025\AVLSimulator\allegro\include\allegro5\allegro_font.h>
+#include <D:\vinic\OneDrive\Documentos\UFV\Algorítimos e Estruturas de Dados\projeto2025\AVLSimulator\allegro\include\allegro5\allegro_ttf.h>
 #include <stdbool.h>
 #include <math.h>
 #include <stdio.h>
 
+// Remove the duplicate Animation structure and keep just one
 typedef struct {
-    float startX, startY; // Posição inicial
-    float endX, endY;     // Posição final
-    float progress;       // Progresso da animação (0 a 1)
-    bool isAnimating;     // Indica se a animação está ativa
-} Animation;
+    float startX, startY;
+    float endX, endY;
+    float progress;
+    bool isAnimating;
+} Animation;  // This will be the only animation structure
 
 typedef struct sNode {
     int data;
@@ -22,13 +23,11 @@ typedef struct sNode {
     struct sNode* right;
     int height;
     Animation animation;
-    float x, y; // Adicione estas linhas para armazenar as coordenadas do nó
+    float x, y;
 } Node;
 
-
-
-void initAnimation(Node* node, float startX, float startY, float targetX, float targetY, float duration);
-void updateAnimation(Node* node, float delta_time);
+void initAnimation(Animation* anim, float startX, float startY, float targetX, float targetY);
+void updateAnimation(Animation* anim, float delta_time);
 bool animationActive(Node* node);
 void updateTreeAnimations(Node* root, float delta_time, ALLEGRO_EVENT_QUEUE* queue);
 

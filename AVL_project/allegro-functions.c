@@ -1,9 +1,9 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include "avl-tree.h"
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_primitives.h>
-#include <allegro5/allegro_font.h>
-#include <allegro5/allegro_ttf.h>
+#include <D:\vinic\OneDrive\Documentos\UFV\Algorítimos e Estruturas de Dados\projeto2025\AVLSimulator\allegro\include\allegro5\allegro5.h>
+#include <D:\vinic\OneDrive\Documentos\UFV\Algorítimos e Estruturas de Dados\projeto2025\AVLSimulator\allegro\include\allegro5\allegro_primitives.h>
+#include <D:\vinic\OneDrive\Documentos\UFV\Algorítimos e Estruturas de Dados\projeto2025\AVLSimulator\allegro\include\allegro5\allegro_font.h>
+#include <D:\vinic\OneDrive\Documentos\UFV\Algorítimos e Estruturas de Dados\projeto2025\AVLSimulator\allegro\include\allegro5\allegro_ttf.h>
 #include <stdio.h>
 
 const int SCREEN_WIDTH = 800;
@@ -160,13 +160,12 @@ void drawNewNode() {
     }
 }
 
-// Função para atualizar a animação
-void updateAnimation(Animation* animation, float delta_time) {
-    if (animation->isAnimating) {
-        animation->progress += delta_time * 4; // Ajuste a velocidade da animação
-        if (animation->progress >= 1.0f) {
-            animation->progress = 1.0f;
-            animation->isAnimating = false;
+void updateAnimation(Animation* anim, float delta_time) {
+    if (anim->isAnimating) {
+        anim->progress += delta_time * 4;
+        if (anim->progress >= 1.0f) {
+            anim->progress = 1.0f;
+            anim->isAnimating = false;
         }
     }
 }

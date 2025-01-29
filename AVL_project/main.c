@@ -1,25 +1,16 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS 
 #include "avl-tree.h"
-#include <allegro5/allegro.h>
+#include <allegro5/allegro5.h>
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdio.h>
+#include <string.h>
 
-#ifndef MY_ANIMATION_H  // Mudança para garantir um nome único
-#define MY_ANIMATION_H
 
-// Estrutura para animações (renomeada para evitar conflito)
-typedef struct {
-    float x, y;       // Posições
-    float speedX, speedY; // Velocidade
-} MyAnimation;  // Alterado de Animation para MyAnimation
 
-#endif // MY_ANIMATION_H
-
-// Declaração da função implementada em outro arquivo .c
-extern void updateAnimation(MyAnimation* anim, float deltaTime);
 
 void displayMenu() {
     printf("\nMenu:\n");
@@ -58,6 +49,18 @@ int main() {
     const int SCREEN_HEIGHT = 600;
     const float FPS = 60.0;
 
+    Animation animation = {
+    .startX = 400,
+    .startY = 300,
+    .endX = 0,
+    .endY = 0,
+    .progress = 0,
+    .isAnimating = false
+    };
+    
+    // Update animation call
+    updateAnimation(&animation, 1.0f / FPS);
+
     ALLEGRO_DISPLAY* display = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
     if (!display) {
         fprintf(stderr, "Erro ao criar a janela.\n");
@@ -90,9 +93,8 @@ int main() {
     int running = 1;
     int highlightValue = -1;
     int value = 0; // Inicializa value para evitar comportamento indefinido
+    
 
-    // Cria uma estrutura de animação (renomeado para MyAnimation)
-    MyAnimation animation = { 400, 300, 0, 0 };
 
     al_start_timer(timer);
 
@@ -121,7 +123,7 @@ int main() {
             calculateTreePositions(root, SCREEN_WIDTH / 2, 50, SCREEN_WIDTH / 4); // Atualiza posições
             break;
 
-        case 3:
+        case 3:{
             printf("Digite o valor para buscar: ");
             scanf("%d", &value);
 
@@ -139,7 +141,7 @@ int main() {
                 drawTextOnScreen(searchResult, 50, font); // Exibe na tela
             }
             break;
-
+        }
         case 4:
             printf("Exibindo árvore em ordem:\n");
             traversalText[0] = '\0'; // Limpa o buffer

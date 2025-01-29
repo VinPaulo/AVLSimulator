@@ -62,14 +62,10 @@ Node* leftRotate(Node* x) {
 
 Node* insert(Node* root, int data, float startX, float startY) {
     if (root == NULL) {
-        Node* node = (Node*)malloc(sizeof(Node));
-        node->data = data;
-        node->left = NULL;
-        node->right = NULL;
-        node->height = 1;
+        Node* node = newNode(data);
         node->x = startX;
         node->y = startY;
-        initAnimation(&node->animation, startX, startY, startX, startY, 1.0f); // Inicializa a animação
+        initAnimation(&node->animation, startX, startY, startX, startY);
         return node;
     }
 
@@ -158,12 +154,12 @@ Node* removeNode(Node* root, int data) {
 
 bool search(Node* root, int value, char* resultBuffer) {
     if (!root) {
-        sprintf(resultBuffer, "Valor %d não encontrado na árvore."); // Mensagem de não encontrado
+        sprintf(resultBuffer, "Valor %d não encontrado na árvore.", value);
         return false;
     }
 
     if (root->data == value) {
-        sprintf(resultBuffer, "Valor %d encontrado na árvore."); // Mensagem de encontrado
+        sprintf(resultBuffer, "Valor %d encontrado na árvore.", value);
         return true;
     }
 
@@ -224,13 +220,13 @@ void postorder(Node* root, char* buffer) {
     strcat(buffer, temp); // Adiciona o valor ao buffer
 }
 
-void initAnimation(Animation* node, float startX, float startY, float targetX, float targetY, float duration) {
-    node->startX = startX;
-    node->startY = startY;
-    node->endX = targetX;
-    node->endY = targetY;
-    node->progress = 0.0f;
-    node->isAnimating = true;
+void initAnimation(Animation* anim, float startX, float startY, float targetX, float targetY) {
+    anim->startX = startX;
+    anim->startY = startY;
+    anim->endX = targetX;
+    anim->endY = targetY;
+    anim->progress = 0.0f;
+    anim->isAnimating = true;
 }
 
 void updateTreeAnimations(Node* root, float deltaTime, ALLEGRO_EVENT_QUEUE* queue) {
