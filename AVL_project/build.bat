@@ -1,5 +1,5 @@
 @echo off
-set ALLEGRO_PATH=..\allegro
+set ALLEGRO_PATH=C:/allegro
 
 if not exist output mkdir output
 

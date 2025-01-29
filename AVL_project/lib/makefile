@@ -1,8 +1,8 @@
+ALLEGRO_PATH = C:/allegro
 CC = gcc
 CFLAGS = -Wall -Wextra -g3
 INCLUDES = -I./include -I"$(ALLEGRO_PATH)/include"
-LIBS = -L"$(ALLEGRO_PATH)/lib" -lallegro -lallegro_primitives -lallegro_font -lallegro_ttf -lallegro_main
-ALLEGRO_PATH = ../allegro
+LIBS = -L"$(ALLEGRO_PATH)/lib" -lallegro -allegro_primitives -allegro_font -allegro_ttf -allegro_main
 
 SRCS = ../main.c ../avl-tree.c ../allegro-functions.c
 OBJS = $(SRCS:.c=.o)
