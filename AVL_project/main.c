@@ -10,18 +10,16 @@
 #include <string.h>
 
 
-
-
 void displayMenu() {
     printf("\nMenu:\n");
     printf("1. Inserir um valor\n");
     printf("2. Remover um valor\n");
     printf("3. Buscar um valor\n");
-    printf("4. Exibir árvore em ordem\n");
-    printf("5. Exibir árvore em pré-ordem\n");
-    printf("6. Exibir árvore em pós-ordem\n");
+    printf("4. Exibir arvore em ordem\n");
+    printf("5. Exibir arvore em pre-ordem\n");
+    printf("6. Exibir arvore em pos-ordem\n");
     printf("7. Sair\n");
-    printf("Escolha uma opção: ");
+    printf("Escolha uma opcao: ");
 }
 
 void drawTextOnScreen(const char* text, int y, ALLEGRO_FONT* font) {
