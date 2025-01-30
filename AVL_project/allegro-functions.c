@@ -139,18 +139,28 @@ void calculateFinalPosition(Node* root, int data, float* finalX, float* finalY, 
 void animate_insertion(Node *root, int data) {
     Node *current = root;
     while (current) {
-        draw_node(current->x, current->y, current->data, true);
+        draw_node(current->x, current->y, current->data, true); // Faz o desenhho do nó
         al_flip_display();
-        al_rest(0.3);
-        draw_node(current->x, current->y, current->data, false);
+        al_rest(0.3); // Quanto esperar para desenhar o outro
+        draw_node(current->x, current->y, current->data, false); // Desenha o nó
         al_flip_display();
         al_rest(0.3);
 
-        if (data < current->data)
-            current = current->left;
-        else
-            current = current->right;
+        if (data < current->data) current = current->left; // Se o elemento for menor que a raíz, vai para à esquerda
+        else current = current->right; // O mesmo, porém se for maior é direita 
     }
+}
+
+void draw_node(float x, float y, int data, bool highlight) {
+    if (highlight) {
+        al_draw_filled_circle(x, y, 20, al_map_rgb(0, 0, 255));
+    } else {
+        al_draw_filled_circle(x, y, 20, al_map_rgb(255, 255, 255));
+    }
+
+    char buffer[10];
+    sprintf(buffer, "%d", data);
+    al_draw_text(font, al_map_rgb(0, 0, 0), x, y, ALLEGRO_ALIGN_CENTER, buffer);
 }
 
 // Função para desenhar a árvore
@@ -160,9 +170,9 @@ void drawTree(Node* root, int highlightdata) {
     // Desenha o nó atual
     if (root->data == highlightdata) al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(0, 0, 255)); // Valor inserido fica destacado
     else if (root->animation.isAnimating) {
-        al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 0, 0)); // Destaca o nó em animação
+        al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 255, 255)); // Destaca o nó em animação
     } else {
-        al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 255, 255)); // Nó normal
+        al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 0, 0)); // Nó normal
     }
 
     char buffer[10]; //Armazenar o valor do nó

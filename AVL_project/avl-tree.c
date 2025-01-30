@@ -61,8 +61,6 @@ Node* leftRotate(Node* x) {
 }
 
 Node* insert(Node* root, int data, float startX, float startY) {
-    animate_insertion(data);
-
     if (root == NULL) {
         Node* node = newNode(data); // Cria um novo nó
         node->x = startX; // Posição horizontal do nó
@@ -70,6 +68,8 @@ Node* insert(Node* root, int data, float startX, float startY) {
         initAnimation(&node->animation, startX, startY, startX, startY);
         return node;
     }
+
+    animate_insertion(root, data);
 
     if (data < root->data) {
         root->left = insert(root->left, data, startX - 100, startY + 50); // rotação simples à esquerda
