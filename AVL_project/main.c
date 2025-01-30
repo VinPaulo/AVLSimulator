@@ -6,6 +6,7 @@
 #include <allegro5/allegro_ttf.h>
 #include <stdio.h>
 #include <string.h>
+#include <windows.h>
 
 void displayMenu() {
     printf("\nMenu:\n");
@@ -19,8 +20,36 @@ void displayMenu() {
     printf("Escolha uma opcao: ");
 }
 
-void drawTextOnScreen(const char* text, int y, ALLEGRO_FONT* font) {
+void drawTextOnScreen(const char* text, int y, ALLEGRO_FONT* font, int previewValue, int tipo) {
+    // Desenha o texto da travessia
     al_draw_text(font, al_map_rgb(255, 255, 255), 10, y, ALLEGRO_ALIGN_LEFT, text);
+    
+    // Desenha o preview do nó se houver um valor válido
+    if (previewValue != -1) {
+        // Posiciona o círculo no canto superior esquerdo
+        float previewX = 50;
+        float previewY = 50;
+        
+        // Desenha o círculo branco
+        al_draw_filled_circle(previewX, previewY, 20, al_map_rgb(255, 255, 255));
+        
+        // Desenha o número dentro do círculo
+        char buffer[10];
+        sprintf(buffer, "%d", previewValue);
+        al_draw_text(font, al_map_rgb(0, 0, 0), previewX, previewY - 10, ALLEGRO_ALIGN_CENTER, buffer);
+        
+        // Opcional: Adiciona um texto explicativo
+        if(tipo == 0){
+            al_draw_text(font, al_map_rgb(255, 255, 255), previewX + 40, previewY - 10, 
+                    ALLEGRO_ALIGN_LEFT, "Valor a ser inserido");
+        }else if (tipo == 1){
+            al_draw_text(font, al_map_rgb(255, 255, 255), previewX + 40, previewY - 10, 
+                    ALLEGRO_ALIGN_LEFT, "Valor a ser removido");       
+    }else if (tipo == 2){
+            al_draw_text(font, al_map_rgb(255, 255, 255), previewX + 40, previewY - 10, 
+                    ALLEGRO_ALIGN_LEFT, "Valor a ser buscado");       
+    }
+    }
 }
 
 int main() {
@@ -79,7 +108,11 @@ int main() {
     Node* root = NULL;
     int running = 1;
     int highlightValue = -1; // Inicializa o valor a ser destacado
+    int previewValue = -1; // Inicializa o valor a ser exibido como preview (bolinha na esquerda)
     int value = 0; // Inicializa value para evitar comportamento indefinido
+    int type = -1;
+    ALLEGRO_FONT* font = al_create_builtin_font();
+
 
     al_start_timer(timer);
 
@@ -93,39 +126,91 @@ int main() {
 
         switch (option) {
         case 1:
+
             printf("Digite o valor para inserir: ");
             scanf("%d", &value);
-            highlightValue = value; // Define o valor a ser destacado
+            previewValue = value; // Atualiza o preview
+                
+            // Mostra o preview por 1 segundo
+            float preview_time = 1.0;
+            float elapsed = 0.0;
+            while (elapsed < preview_time) {
+                // Renderiza a tela com o preview
+                al_clear_to_color(al_map_rgb(0, 0, 0));
+                drawTextOnScreen("", 30, font, previewValue, 0); // Desenha o preview
+                type = 0;
+                drawTree(root, highlightValue); // Continua mostrando a árvore
+                al_flip_display();
+                    
+                al_rest(0.016); // ~60 FPS
+                elapsed += 0.016;
+            }
+                
+            // Insere o valor e atualiza a árvore
+            highlightValue = value;
             root = insert(root, value, SCREEN_WIDTH / 2, 50);
-            calculateTreePositions(root, SCREEN_WIDTH / 2, 50, SCREEN_WIDTH / 4); // Atualiza posicoes
+            calculateTreePositions(root, SCREEN_WIDTH / 2, 50, SCREEN_WIDTH / 4);
+            previewValue = -1; // Limpa o preview
             break;
 
         case 2:
             printf("Digite o valor para remover: ");
             scanf("%d", &value);
+            
+            // Preview do nó a ser removido
+            previewValue = value;
+            
+            // Mostra o preview por 1 segundo
+            preview_time = 1.0;
+            elapsed = 0.0;
+            while (elapsed < preview_time) {
+                al_clear_to_color(al_map_rgb(0, 0, 0));
+                drawTextOnScreen("Nó a ser removido:", 30, font, previewValue, 1);
+                type = 1;
+                drawTree(root, value); // Destaca o nó na árvore
+                al_flip_display();
+                
+                al_rest(0.016);
+                elapsed += 0.016;
+            }
+            
+            // Remove o nó e atualiza a árvore
             root = removeNode(root, value);
             printf("Valor %d removido.\n", value);
-            calculateTreePositions(root, SCREEN_WIDTH / 2, 50, SCREEN_WIDTH / 4); // Atualiza posicoes
+            calculateTreePositions(root, SCREEN_WIDTH / 2, 50, SCREEN_WIDTH / 4);
+            previewValue = -1; // Limpa o preview
             break;
 
         case 3: {
             printf("Digite o valor para buscar: ");
             scanf("%d", &value);
 
-            char searchResult[100]; // Buffer para armazenar o resultado da busca
+            char searchResult[100];
             if (search(root, value, searchResult)) {
-                printf("%s\n", searchResult); // Exibe no terminal
-                highlightValue = value; // Destaca o valor encontrado
+                printf("%s\n", searchResult);
+                highlightValue = value;
             } else {
-                printf("%s\n", searchResult); // Exibe no terminal
-                highlightValue = -1; // Remove o destaque se não encontrado
+                printf("%s\n", searchResult);
+                highlightValue = -1;
             }
 
-            // Exibe o resultado na tela
-            ALLEGRO_FONT* font = al_create_builtin_font();
             if (font) {
-                drawTextOnScreen(searchResult, 50, font); // Exibe na tela
+                // Mostra resultado por 2 segundos
+                preview_time = 2.0;
+                elapsed = 0.0;
+                while (elapsed < preview_time) {
+                    al_clear_to_color(al_map_rgb(0, 0, 0));
+                    drawTextOnScreen(searchResult, 50, font, highlightValue,2);
+                    type = 2;
+                    drawTree(root, highlightValue);
+                    al_flip_display();
+                    
+                    al_rest(0.016);
+                    elapsed += 0.016;
+                }
             }
+            highlightValue = -1;
+
             break;
         }
         case 4:
@@ -170,26 +255,18 @@ int main() {
                 redraw = true;
             }
 
-            if (redraw && al_is_event_queue_empty(queue)) {
+           if (redraw && al_is_event_queue_empty(queue)) {
                 redraw = false;
-
                 al_clear_to_color(al_map_rgb(0, 0, 0));
-
-                ALLEGRO_FONT* font = al_create_builtin_font(); // Usa a fonte padrao do Allegro
-
-                // Desenha o valor digitado no canto esquerdo
-                if (font) {
-                    char buffer[50];
-                    sprintf(buffer, "Valor digitado: %d", value); // Ajustado para mostrar apenas o valor digitado
-                    al_draw_text(font, al_map_rgb(255, 255, 255), 10, 10, ALLEGRO_ALIGN_LEFT, buffer);
-
-                    // Desenha o texto da travessia na tela
-                    drawTextOnScreen(traversalText, 30, font);
-                }
-
-                // Desenha a arvore
-                drawTree(root, highlightValue); // Passa o segundo argumento (highlightValue)
-
+                ALLEGRO_FONT* font = al_create_builtin_font();
+                
+                // Desenha o preview e outros textos
+                drawTextOnScreen(traversalText, 30, font, previewValue,type);
+                type = -1;
+                
+                // Desenha a árvore
+                drawTree(root, highlightValue);
+                
                 al_flip_display();
             }
         }
