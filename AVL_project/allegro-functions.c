@@ -136,12 +136,29 @@ void calculateFinalPosition(Node* root, int data, float* finalX, float* finalY, 
     }
 }
 
+void animate_insertion(Node *root, int data) {
+    Node *current = root;
+    while (current) {
+        draw_node(current->x, current->y, current->data, true);
+        al_flip_display();
+        al_rest(0.3);
+        draw_node(current->x, current->y, current->data, false);
+        al_flip_display();
+        al_rest(0.3);
+
+        if (data < current->data)
+            current = current->left;
+        else
+            current = current->right;
+    }
+}
+
 // Função para desenhar a árvore
-void drawTree(Node* root, int highlightValue) {
+void drawTree(Node* root, int highlightdata) {
     if (root == NULL) return;
 
     // Desenha o nó atual
-    if (root->data == highlightValue) al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(0, 0, 255)); // Valor inserido fica destacado
+    if (root->data == highlightdata) al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(0, 0, 255)); // Valor inserido fica destacado
     else if (root->animation.isAnimating) {
         al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 0, 0)); // Destaca o nó em animação
     } else {
@@ -164,7 +181,7 @@ void drawTree(Node* root, int highlightValue) {
         float offsetY = (dy / distance) * 30; // Ajuste para a borda do círculo 
 
         al_draw_line(root->x + offsetX, root->y + offsetY, root->left->x - offsetX, root->left->y - offsetY, al_map_rgb(255, 255, 255), 2); // Desenho das linhas entre pai e filho (2, espessura da linha)
-        drawTree(root->left, highlightValue); // Faz o desenho da árvore recursivamente para à esquerda com o valor destacado (último elemento inserido)
+        drawTree(root->left, highlightdata); // Faz o desenho da árvore recursivamente para à esquerda com o valor destacado (último elemento inserido)
     }
     if (root->right) { // Mesma função da anterior, agora para à direita
         float dx = root->right->x - root->x;
@@ -174,7 +191,7 @@ void drawTree(Node* root, int highlightValue) {
         float offsetY = (dy / distance) * 30;
 
         al_draw_line(root->x + offsetX, root->y + offsetY, root->right->x - offsetX, root->right->y - offsetY, al_map_rgb(0, 0, 255), 2);
-        drawTree(root->right, highlightValue);
+        drawTree(root->right, highlightdata);
     }
 }
 
@@ -205,8 +222,7 @@ void updateAnimation(Animation* anim, float delta_time) { // Atualiza a animaç�
         }
     }
 }
-
-// ESSA FUNÇÃO É NECESSÁRIA?? 
+ 
 void handleInput(ALLEGRO_EVENT event) {
     if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
         if (event.keyboard.keycode >= ALLEGRO_KEY_0 && event.keyboard.keycode <= ALLEGRO_KEY_9) {

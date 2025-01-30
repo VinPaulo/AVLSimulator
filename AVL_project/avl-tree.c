@@ -15,40 +15,40 @@ Node* newNode(int data) {
 }
 
 int maxValue(int a, int b) {
-    return a > b ? a : b;
+    return a > b ? a : b; // Retorna o maior valor entre a e b
 }
 
 int height(Node* root) {
-    return root ? root->height : 0;
+    return root ? root->height : 0; // Se tiver elemento, retorna a altura da raíz, caso contrário a altura é 0
 }
 
 int balance(Node* root) {
-    return root ? height(root->left) - height(root->right) : 0;
+    return root ? height(root->left) - height(root->right) : 0; // Se a raíz tiver elementos, retorna a diferença entre a altura da subárvore esquerda e direita, caso contrário retorna 0
 }
 
 Node* minValueNode(Node* root) {
-    Node* current = root;
+    Node* current = root; // Nó atual recebe a raíz
     while (current && current->left) {
-        current = current->left;
+        current = current->left; // Atual recebe o nó da esquerda e percorre a subárvore esquerda
     }
     return current;
 }
 
 Node* rightRotate(Node* y) {
-    Node* x = y->left;
-    Node* T2 = x->right;
+    Node* x = y->left; // Nó x recebe o nó da esquerda de y
+    Node* T2 = x->right; // Nó T2 recebe o nó da direita de x (T2 é a subárvore direita)
 
-    x->right = y;
-    y->left = T2;
+    x->right = y; // Rotação simples à esquerda
+    y->left = T2; // Rotação simples à direita  
 
-    y->height = maxValue(height(y->left), height(y->right)) + 1;
-    x->height = maxValue(height(x->left), height(x->right)) + 1;
+    y->height = maxValue(height(y->left), height(y->right)) + 1; // Atualiza a altura da árvore
+    x->height = maxValue(height(x->left), height(x->right)) + 1; // Atualiza a altura da árvore
 
     return x;
 }
 
 Node* leftRotate(Node* x) {
-    Node* y = x->right;
+    Node* y = x->right; // A mesma coisa da função acima, porém faz para a esquerda
     Node* T2 = y->left;
 
     y->left = x;
@@ -61,43 +61,45 @@ Node* leftRotate(Node* x) {
 }
 
 Node* insert(Node* root, int data, float startX, float startY) {
+    animate_insertion(data);
+
     if (root == NULL) {
-        Node* node = newNode(data);
-        node->x = startX;
-        node->y = startY;
+        Node* node = newNode(data); // Cria um novo nó
+        node->x = startX; // Posição horizontal do nó
+        node->y = startY; // A mesma coisa porém vertical
         initAnimation(&node->animation, startX, startY, startX, startY);
         return node;
     }
 
     if (data < root->data) {
-        root->left = insert(root->left, data, startX - 100, startY + 50);
+        root->left = insert(root->left, data, startX - 100, startY + 50); // rotação simples à esquerda
     }
     else if (data > root->data) {
-        root->right = insert(root->right, data, startX + 100, startY + 50);
+        root->right = insert(root->right, data, startX + 100, startY + 50); // rotação simples à direita
     }
     else {
         return root;
     }
 
-    root->height = 1 + maxValue(height(root->left), height(root->right));
-    int balanceFactor = balance(root);
+    root->height = 1 + maxValue(height(root->left), height(root->right)); // atualização da altura da árvore depois da inserção dos elementos
+    int balanceFactor = balance(root); // fator de balanceamento recebe a função que faz o cálculo do balanceamento 
 
     if (balanceFactor > 1 && data < root->left->data) {
-        return rightRotate(root);
+        return rightRotate(root); // rotação simples à direita (caso o fator de balanceamento seja maior que 1)
     }
 
-    if (balanceFactor < -1 && data > root->right->data) {
-        return leftRotate(root);
+    if (balanceFactor < -1 && data > root->right->data) { 
+        return leftRotate(root); // rotação simples à esquerda (caso o fator de balanceamento seja menor que -1)
     }
 
-    if (balanceFactor > 1 && data > root->left->data) {
-        root->left = leftRotate(root->left);
-        return rightRotate(root);
+    if (balanceFactor > 1 && data > root->left->data) { 
+        root->left = leftRotate(root->left); // rotação dupla à esquerda (caso o fator de balanceamento seja maior que 1 e o valor seja maior que o valor do nó à esquerda)
+        return rightRotate(root); // rotação simples à direita 
     }
 
     if (balanceFactor < -1 && data < root->right->data) {
-        root->right = rightRotate(root->right);
-        return leftRotate(root);
+        root->right = rightRotate(root->right); // rotação dupla à direita (a mesma coisa da função de cima, só que para a direita)
+        return leftRotate(root); // rotação simples à esquerda
     }
 
     return root;
@@ -107,37 +109,37 @@ Node* removeNode(Node* root, int data) {
     if (!root) return root;
 
     if (data < root->data)
-        root->left = removeNode(root->left, data);
+        root->left = removeNode(root->left, data); // Faz a remoção da subárvore esquerda
     else if (data > root->data)
-        root->right = removeNode(root->right, data);
+        root->right = removeNode(root->right, data); // O mesmo para a direita
     else {
-        if (!root->left || !root->right) {
-            Node* temp = root->left ? root->left : root->right;
+        if (!root->left || !root->right) { // Se o nó tiver apenas um filho
+            Node* temp = root->left ? root->left : root->right; // O temp recebe o nó da esquerda ou direita
 
             if (!temp) {
-                free(root);
+                free(root); // Libera o nó
                 return NULL;
             }
             else {
-                *root = *temp;
+                *root = *temp; // Copia o conteúdo de temp para root
                 free(temp);
             }
         }
         else {
-            Node* temp = minValueNode(root->right);
+            Node* temp = minValueNode(root->right); // O temp recebe o menor valor da subárvore direita
             root->data = temp->data;
-            root->right = removeNode(root->right, temp->data);
+            root->right = removeNode(root->right, temp->data); // Remove o nó
         }
     }
 
     if (!root) return root;
 
-    root->height = 1 + maxValue(height(root->left), height(root->right));
+    root->height = 1 + maxValue(height(root->left), height(root->right)); // Atualiza a altura da árvore
     int balanceFactor = balance(root);
 
-    if (balanceFactor > 1 && balance(root->left) >= 0) return rightRotate(root);
+    if (balanceFactor > 1 && balance(root->left) >= 0) return rightRotate(root); // Rotação simples à direita
 
-    if (balanceFactor > 1 && balance(root->left) < 0) {
+    if (balanceFactor > 1 && balance(root->left) < 0) { // A mesma funcionalidade da função de inserir elemento 
         root->left = leftRotate(root->left);
         return rightRotate(root);
     }
@@ -159,7 +161,7 @@ bool search(Node* root, int value, char* resultBuffer) {
     }
 
     if (root->data == value) {
-        sprintf(resultBuffer, "Valor %d encontrado na arvore.", value);
+        sprintf(resultBuffer, "Valor %d encontrado na arvore.", value); // Converte o valor para string
         return true;
     }
 

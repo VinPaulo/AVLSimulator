@@ -31,6 +31,7 @@ bool animationActive(Node* node);
 void updateTreeAnimations(Node* root, float delta_time, ALLEGRO_EVENT_QUEUE* queue);
 
 void calculateTreePositions(Node* root, float x, float y, float offset);
+void animate_insertion(Node *root, int data);
 void drawTree(Node* root, int highlightValue);
 
 void initAllegro(); 

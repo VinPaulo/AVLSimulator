@@ -48,17 +48,6 @@ int main() {
     const int SCREEN_HEIGHT = 600;
     const float FPS = 60.0;
 
-    Animation animation = {
-        .startX = 400,
-        .startY = 300,
-        .endX = 0,
-        .endY = 0,
-        .progress = 0,
-        .isAnimating = false
-    };
-
-    updateAnimation(&animation, 1.0f / FPS);
-
     ALLEGRO_DISPLAY* display = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
     if (!display) {
         fprintf(stderr, "Erro ao criar a janela.\n");
@@ -179,8 +168,6 @@ int main() {
             }
             else if (event.type == ALLEGRO_EVENT_TIMER) {
                 redraw = true;
-                updateAnimation(&animation, 1.0 / FPS); // Atualiza a animacao com deltaTime
-                updateTreeAnimations(root, 1.0 / FPS, queue); // Atualiza as animacoes da arvore
             }
 
             if (redraw && al_is_event_queue_empty(queue)) {
