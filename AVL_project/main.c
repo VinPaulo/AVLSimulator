@@ -6,8 +6,6 @@
 #include <allegro5/allegro_ttf.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdio.h>
-#include <string.h>
 
 void displayMenu() {
     printf("\nMenu:\n");
@@ -51,14 +49,14 @@ int main() {
     const float FPS = 60.0;
 
     Animation animation = {
-    .startX = 400,
-    .startY = 300,
-    .endX = 0,
-    .endY = 0,
-    .progress = 0,
-    .isAnimating = false
+        .startX = 400,
+        .startY = 300,
+        .endX = 0,
+        .endY = 0,
+        .progress = 0,
+        .isAnimating = false
     };
-    
+
     updateAnimation(&animation, 1.0f / FPS);
 
     ALLEGRO_DISPLAY* display = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -93,8 +91,6 @@ int main() {
     int running = 1;
     int highlightValue = -1; // Inicializa o valor a ser destacado
     int value = 0; // Inicializa value para evitar comportamento indefinido
-    
-
 
     al_start_timer(timer);
 

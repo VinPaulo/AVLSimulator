@@ -172,15 +172,15 @@ bool search(Node* root, int value, char* resultBuffer) {
 
 Node* searchNode(Node* root, int value) {
     if (root == NULL) {
-        return NULL; // Valor não encontrado
+        return NULL; // Valor nao encontrado
     }
     if (root->data == value) {
         return root; // Valor encontrado
     }
     if (value < root->data) {
-        return searchNode(root->left, value); // Busca na subárvore esquerda
+        return searchNode(root->left, value); // Busca na subarvore esquerda
     } else {
-        return searchNode(root->right, value); // Busca na subárvore direita
+        return searchNode(root->right, value); // Busca na subarvore direita
     }
 }
 
