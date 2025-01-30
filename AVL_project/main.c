@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
 void displayMenu() {
     printf("\nMenu:\n");
     printf("1. Inserir um valor\n");
@@ -27,7 +26,6 @@ void drawTextOnScreen(const char* text, int y, ALLEGRO_FONT* font) {
 }
 
 int main() {
-    // Inicializa o Allegro e seus addons
     if (!al_init()) {
         fprintf(stderr, "Erro ao inicializar o Allegro.\n");
         return -1;
@@ -61,7 +59,6 @@ int main() {
     .isAnimating = false
     };
     
-    // Update animation call
     updateAnimation(&animation, 1.0f / FPS);
 
     ALLEGRO_DISPLAY* display = al_create_display(SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -90,11 +87,11 @@ int main() {
     al_install_keyboard();
     al_register_event_source(queue, al_get_keyboard_event_source());
 
-    initFont(); // Chama a função para inicializar a fonte
+    initFont(); // Chama a funcao para inicializar a fonte
 
     Node* root = NULL;
     int running = 1;
-    int highlightValue = -1;
+    int highlightValue = -1; // Inicializa o valor a ser destacado
     int value = 0; // Inicializa value para evitar comportamento indefinido
     
 
@@ -115,27 +112,28 @@ int main() {
             scanf("%d", &value);
             highlightValue = value; // Define o valor a ser destacado
             root = insert(root, value, SCREEN_WIDTH / 2, 50);
-            calculateTreePositions(root, SCREEN_WIDTH / 2, 50, SCREEN_WIDTH / 4); // Atualiza posições
+            calculateTreePositions(root, SCREEN_WIDTH / 2, 50, SCREEN_WIDTH / 4); // Atualiza posicoes
             break;
 
         case 2:
             printf("Digite o valor para remover: ");
             scanf("%d", &value);
             root = removeNode(root, value);
-            printf("Valor %d removido (se existia na árvore).\n", value);
-            calculateTreePositions(root, SCREEN_WIDTH / 2, 50, SCREEN_WIDTH / 4); // Atualiza posições
+            printf("Valor %d removido.\n", value);
+            calculateTreePositions(root, SCREEN_WIDTH / 2, 50, SCREEN_WIDTH / 4); // Atualiza posicoes
             break;
 
-        case 3:{
+        case 3: {
             printf("Digite o valor para buscar: ");
             scanf("%d", &value);
 
             char searchResult[100]; // Buffer para armazenar o resultado da busca
             if (search(root, value, searchResult)) {
                 printf("%s\n", searchResult); // Exibe no terminal
-            }
-            else {
+                highlightValue = value; // Destaca o valor encontrado
+            } else {
                 printf("%s\n", searchResult); // Exibe no terminal
+                highlightValue = -1; // Remove o destaque se não encontrado
             }
 
             // Exibe o resultado na tela
@@ -146,23 +144,23 @@ int main() {
             break;
         }
         case 4:
-            printf("Exibindo árvore em ordem:\n");
+            printf("Exibindo arvore em ordem:\n");
             traversalText[0] = '\0'; // Limpa o buffer
-            inorder(root, traversalText); // Passa o buffer para a função inorder
+            inorder(root, traversalText); // Passa o buffer para a funcao inorder
             printf("%s\n", traversalText);
             break;
 
         case 5:
-            printf("Exibindo árvore em pré-ordem:\n");
+            printf("Exibindo arvore em pre-ordem:\n");
             traversalText[0] = '\0'; // Limpa o buffer
-            preorder(root, traversalText); // Passa o buffer para a função preorder
+            preorder(root, traversalText); // Passa o buffer para a funcao preorder
             printf("%s\n", traversalText);
             break;
 
         case 6:
-            printf("Exibindo árvore em pós-ordem:\n");
+            printf("Exibindo arvore em pos-ordem:\n");
             traversalText[0] = '\0'; // Limpa o buffer
-            postorder(root, traversalText); // Passa o buffer para a função postorder
+            postorder(root, traversalText); // Passa o buffer para a funcao postorder
             printf("%s\n", traversalText);
             break;
 
@@ -171,7 +169,7 @@ int main() {
             break;
 
         default:
-            printf("Opção inválida!\n");
+            printf("Opcao invalida!\n");
         }
 
         bool redraw = true;
@@ -185,7 +183,8 @@ int main() {
             }
             else if (event.type == ALLEGRO_EVENT_TIMER) {
                 redraw = true;
-                updateAnimation(&animation, 1.0 / FPS); // Atualiza a animação com deltaTime
+                updateAnimation(&animation, 1.0 / FPS); // Atualiza a animacao com deltaTime
+                updateTreeAnimations(root, 1.0 / FPS, queue); // Atualiza as animacoes da arvore
             }
 
             if (redraw && al_is_event_queue_empty(queue)) {
@@ -193,7 +192,7 @@ int main() {
 
                 al_clear_to_color(al_map_rgb(0, 0, 0));
 
-                ALLEGRO_FONT* font = al_create_builtin_font(); // Usa a fonte padrão do Allegro
+                ALLEGRO_FONT* font = al_create_builtin_font(); // Usa a fonte padrao do Allegro
 
                 // Desenha o valor digitado no canto esquerdo
                 if (font) {
@@ -205,7 +204,7 @@ int main() {
                     drawTextOnScreen(traversalText, 30, font);
                 }
 
-                // Desenha a árvore
+                // Desenha a arvore
                 drawTree(root, highlightValue); // Passa o segundo argumento (highlightValue)
 
                 al_flip_display();
@@ -214,7 +213,7 @@ int main() {
     }
 
     // Libera os recursos
-    destroyFont(); // Chama a função para liberar a fonte
+    destroyFont(); // Chama a funcao para liberar a fonte
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);
     al_destroy_display(display);

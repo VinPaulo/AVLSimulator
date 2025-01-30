@@ -6,24 +6,24 @@
 #include <allegro5/allegro_ttf.h>
 #include <stdio.h>
 
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
-const float FPS = 60.0;
+const int SCREEN_WIDTH = 800; // Tamanho da janela (Horizontal)
+const int SCREEN_HEIGHT = 600; // Tamanho da janela (Vertical)
+const float FPS = 60.0; 
 // Variáveis globais
-ALLEGRO_DISPLAY* display = NULL;
-ALLEGRO_EVENT_QUEUE* event_queue = NULL;
+ALLEGRO_DISPLAY* display = NULL; // Janela vazia (Inicar o display preto) 
+ALLEGRO_EVENT_QUEUE* event_queue = NULL; // Fila de eventos (Ordem de acontecimentos)  
 ALLEGRO_TIMER* timer = NULL;
-ALLEGRO_FONT* font = NULL;
+ALLEGRO_FONT* font = NULL; // Fonte vazio (Até receber o elemento)
 
-Node* avlTree = NULL;          // Raiz da árvore AVL
-int newNodedata = -1;          // Valor do novo nó (-1 significa que não há novo nó)
-Animation newNodeAnimation;    // Animação do novo nó
-float blinkTimer = 0.0f;       // Timer para o efeito de piscar
-float delta_time = 0.016f;     // Tempo entre frames (~60 FPS)
+Node* avlTree = NULL;  // Inicia o desenho da árvore vazio
+int newNodedata = -1; // Inicia o novo nó com -1 (Fator de balanceamento [-1,1])
+Animation newNodeAnimation; // Iniciar a animação do nó 
+float blinkTimer = 0.0f; // Tempo de (piscar) do nó alocado
+float delta_time = 0.016f; // Atualização da animação milisegundos
 
 // Função para inicializar a fonte
 void initFont() {
-    font = al_create_builtin_font();
+    font = al_create_builtin_font(); // Cria fonte interna (Fonte externa não funciona)
     if (!font) {
         fprintf(stderr, "Erro ao carregar a fonte.\n");
         exit(EXIT_FAILURE);
@@ -60,8 +60,8 @@ void initAllegro() {
         exit(EXIT_FAILURE);
     }
 
-    al_set_new_display_flags(ALLEGRO_RESIZABLE);
-    al_resize_display(display, SCREEN_WIDTH, SCREEN_HEIGHT);
+    al_set_new_display_flags(ALLEGRO_RESIZABLE); // Janela adaptável (Conforme crescimento da árvore)
+    al_resize_display(display, SCREEN_WIDTH, SCREEN_HEIGHT); // Janalea com tamanho inicial
 
     timer = al_create_timer(1.0 / 60.0); // 60 FPS
     if (!timer) {
@@ -75,26 +75,64 @@ void initAllegro() {
         exit(EXIT_FAILURE);
     }
 
-    initFont(); // Inicializa a fonte
+    initFont();
 
-    al_register_event_source(event_queue, al_get_display_event_source(display));
-    al_register_event_source(event_queue, al_get_timer_event_source(timer));
+    al_register_event_source(event_queue, al_get_display_event_source(display)); // Registra o (contéudo do display)
+    al_register_event_source(event_queue, al_get_timer_event_source(timer)); // Registra o (tempo)
     al_install_keyboard();
-    al_register_event_source(event_queue, al_get_keyboard_event_source());
+    al_register_event_source(event_queue, al_get_keyboard_event_source()); // Registra o (a entrada do teclado)
+}
+
+void initAnimation(Animation* anim, float startX, float startY, float targetX, float targetY) {
+    anim->startX = startX; // Posição inicial do nó
+    anim->startY = startY; // Mesma coisa 
+    anim->endX = targetX; // Posição final do nó
+    anim->endY = targetY; // Mesma coisa
+    anim->progress = 0.0f;
+    anim->isAnimating = true; // Inicia a animação
+}
+
+void updateTreeAnimations(Node* root, float delta_time, ALLEGRO_EVENT_QUEUE* queue) {
+    if (root != NULL) {
+        updateTreeAnimations(root->left, delta_time, queue); // Atualiza a animação da subárvore esquerda 
+        updateTreeAnimations(root->right, delta_time, queue); // Mesma coisa só que para a direita 
+
+        updateAnimation(&root->animation, delta_time); // Atualiza a animação do nó 
+
+        al_clear_to_color(al_map_rgb(0, 0, 0)); // Limpa o display
+        drawTree(root, -1); // Desenha a árvore sem destacar nenhum nó
+        al_flip_display(); 
+
+        al_rest(delta_time);
+    }
+}
+
+void calculateTreePositions(Node* root, float x, float y, float offset) {
+    if (root == NULL) return;
+
+    root->x = x; // Posição horizontal do nó
+    root->y = y; // Posição vertical do nó
+
+    if (root->left != NULL) {
+        calculateTreePositions(root->left, x - offset, y + 50, offset / 2); // Posição que a subárvore esquerda vai ficar
+    }
+    if (root->right != NULL) {
+        calculateTreePositions(root->right, x + offset, y + 50, offset / 2); // Mesma coisa só que para a direita 
+    }
 }
 
 // Função para calcular a posição final do novo nó na árvore
 void calculateFinalPosition(Node* root, int data, float* finalX, float* finalY, float parentX, float parentY) {
-    if (root == NULL) return;
+    if (!root) return;
     if (data < root->data) {
-        *finalX = parentX - 100; // Ajuste a posição X para o filho esquerdo
-        *finalY = parentY + 50;  // Ajuste a posição Y para o filho esquerdo
-        calculateFinalPosition(root->left, data, finalX, finalY, *finalX, *finalY);
+        *finalX = parentX - 100; // Mexe para a esquerda (100 posições)
+        *finalY = parentY + 50;  // Mexe para baixo (50 posições)
+        calculateFinalPosition(root->left, data, finalX, finalY, *finalX, *finalY); // Recebe os "parametros" e calcula a posição final
     }
     else {
-        *finalX = parentX + 100; // Ajuste a posição X para o filho direito
-        *finalY = parentY + 50;  // Ajuste a posição Y para o filho direito
-        calculateFinalPosition(root->right, data, finalX, finalY, *finalX, *finalY);
+        *finalX = parentX + 100; // Mexe para a direita (100 posições)
+        *finalY = parentY + 50;  // Mexe para baixo (50 posições)
+        calculateFinalPosition(root->right, data, finalX, finalY, *finalX, *finalY); // Igual a função de cima
     }
 }
 
@@ -103,39 +141,36 @@ void drawTree(Node* root, int highlightValue) {
     if (root == NULL) return;
 
     // Desenha o nó atual
-    if (root->data == highlightValue) {
-        al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(0, 0, 255)); // Destaca o nó
+    if (root->data == highlightValue) al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(0, 0, 255)); // Valor inserido fica destacado
+    else if (root->animation.isAnimating) {
+        al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 0, 0)); // Destaca o nó em animação
+    } else {
+        al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 255, 255)); // Nó normal
     }
-    else {
-        al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 255, 255));
+
+    char buffer[10]; //Armazenar o valor do nó
+    sprintf(buffer, "%d", root->data); // Desenha o valor do nó (convertendo para string)
+    al_draw_text(font, al_map_rgb(0, 0, 0), root->x, root->y, ALLEGRO_ALIGN_CENTER, buffer); // Desenha o valor do nó
+
+    int balanceFactor = balance(root); // Recebe a função que calcula o valor do balanceamento
+    sprintf(buffer, "[%d]", balanceFactor); // Imprime o valor do balanceamento (convertendo para string)
+    al_draw_text(font, al_map_rgb(255, 255, 255), root->x + 30, root->y, ALLEGRO_ALIGN_LEFT, buffer); // Desenha o valor do balanceamento
+
+    if (root->left) { // Conexões com os filhos 
+        float dx = root->left->x - root->x; // Calcula a diferença entre as posições (raíz -> [elemento à esquerda] - raíz -> [raíz (elemento)])
+        float dy = root->left->y - root->y; // O mesmo para a função acima, porém para o eixo das ordenadas (vertical) 
+        float distance = sqrt(dx * dx + dy * dy); // Distância entre dois ponto 
+        float offsetX = (dx / distance) * 30; // Ajuste para a borda do círculo (30 posições [pixeis] entre as bordas)
+        float offsetY = (dy / distance) * 30; // Ajuste para a borda do círculo 
+
+        al_draw_line(root->x + offsetX, root->y + offsetY, root->left->x - offsetX, root->left->y - offsetY, al_map_rgb(255, 255, 255), 2); // Desenho das linhas entre pai e filho (2, espessura da linha)
+        drawTree(root->left, highlightValue); // Faz o desenho da árvore recursivamente para à esquerda com o valor destacado (último elemento inserido)
     }
-
-    // Desenha o valor do nó
-    char buffer[10];
-    sprintf(buffer, "%d", root->data);
-    al_draw_text(font, al_map_rgb(0, 0, 0), root->x, root->y, ALLEGRO_ALIGN_CENTER, buffer);
-
-    // Desenha o valor do balanceamento
-    int balanceFactor = balance(root);
-    sprintf(buffer, "[%d]", balanceFactor);
-    al_draw_text(font, al_map_rgb(255, 255, 255), root->x + 30, root->y, ALLEGRO_ALIGN_LEFT, buffer);
-
-    // Desenha as conexões com os filhos
-    if (root->left != NULL) {
-        float dx = root->left->x - root->x;
-        float dy = root->left->y - root->y;
-        float distance = sqrt(dx * dx + dy * dy);
-        float offsetX = (dx / distance) * 30; // Ajuste para a borda do círculo
-        float offsetY = (dy / distance) * 30;
-
-        al_draw_line(root->x + offsetX, root->y + offsetY, root->left->x - offsetX, root->left->y - offsetY, al_map_rgb(255, 255, 255), 2);
-        drawTree(root->left, highlightValue);
-    }
-    if (root->right != NULL) {
+    if (root->right) { // Mesma função da anterior, agora para à direita
         float dx = root->right->x - root->x;
         float dy = root->right->y - root->y;
         float distance = sqrt(dx * dx + dy * dy);
-        float offsetX = (dx / distance) * 30; // Ajuste para a borda do círculo
+        float offsetX = (dx / distance) * 30;
         float offsetY = (dy / distance) * 30;
 
         al_draw_line(root->x + offsetX, root->y + offsetY, root->right->x - offsetX, root->right->y - offsetY, al_map_rgb(0, 0, 255), 2);
@@ -143,16 +178,16 @@ void drawTree(Node* root, int highlightValue) {
     }
 }
 
-void drawNewNode() {
-    if (newNodedata != -1) {
-        float x = newNodeAnimation.startX + (newNodeAnimation.endX - newNodeAnimation.startX) * newNodeAnimation.progress;
-        float y = newNodeAnimation.startY + (newNodeAnimation.endY - newNodeAnimation.startY) * newNodeAnimation.progress;
+void drawNewNode() { // Desenha os nós
+    if (newNodedata != -1) { 
+        float x = newNodeAnimation.startX + (newNodeAnimation.endX - newNodeAnimation.startX) * newNodeAnimation.progress; // Cálculo da posição final do nó
+        float y = newNodeAnimation.startY + (newNodeAnimation.endY - newNodeAnimation.startY) * newNodeAnimation.progress; // O mesmo, porém no eixo das ordenadas 
 
-        al_draw_filled_circle(x, y, 20, al_map_rgb(255, 255, 255)); // Desenha o novo nó
+        al_draw_filled_circle(x, y, 20, al_map_rgb(255, 255, 255)); // Circulo do novo nó
         if (font) {
             char buffer[10];
-            sprintf(buffer, "%d", newNodedata);
-            al_draw_text(font, al_map_rgb(0, 0, 0), x, y - 10, ALLEGRO_ALIGN_CENTER, buffer);
+            sprintf(buffer, "%d", newNodedata); // Elemento do nó que vai dentro do circulo
+            al_draw_text(font, al_map_rgb(0, 0, 0), x, y - 10, ALLEGRO_ALIGN_CENTER, buffer); // Desenha o valor do nó
         }
         else {
             fprintf(stderr, "Fonte não carregada corretamente.\n");
@@ -160,29 +195,28 @@ void drawNewNode() {
     }
 }
 
-void updateAnimation(Animation* anim, float delta_time) {
+// ESSA FUNÇÃO PODE SER MODIFICADA PARA FAZER O DESTAQUE DOS NÓS??  (Sim, pesquisar como depois)
+void updateAnimation(Animation* anim, float delta_time) { // Atualiza a animação
     if (anim->isAnimating) {
-        anim->progress += delta_time * 4;
-        if (anim->progress >= 1.0f) {
-            anim->progress = 1.0f;
-            anim->isAnimating = false;
+        anim->progress += delta_time * 4; // Atualiza o progresso da animação com base no delta_time
+        if (anim->progress >= 1.0f) { 
+            anim->progress = 1.0f; // Garante que o progresso não exceda 1.0 
+            anim->isAnimating = false; // Marca a animação como concluída
         }
     }
 }
 
-// Função para lidar com a entrada do usuário
+// ESSA FUNÇÃO É NECESSÁRIA?? 
 void handleInput(ALLEGRO_EVENT event) {
     if (event.type == ALLEGRO_EVENT_KEY_DOWN) {
         if (event.keyboard.keycode >= ALLEGRO_KEY_0 && event.keyboard.keycode <= ALLEGRO_KEY_9) {
-            newNodedata = event.keyboard.keycode - ALLEGRO_KEY_0; // Armazena o valor do novo nó
-
-            // Calcula a posição final do novo nó na árvore
+            newNodedata = event.keyboard.keycode - ALLEGRO_KEY_0; 
             float finalX, finalY;
-            calculateFinalPosition(avlTree, newNodedata, &finalX, &finalY, SCREEN_WIDTH / 2, 50); // Posição inicial da raiz
+            calculateFinalPosition(avlTree, newNodedata, &finalX, &finalY, SCREEN_WIDTH / 2, 50); // Posição da ráiz
 
             // Inicia a animação
-            newNodeAnimation.startX = 50; // Posição X inicial (canto superior esquerdo)
-            newNodeAnimation.startY = 50; // Posição Y inicial
+            newNodeAnimation.startX = 50; // Posição horizontal inicial (canto superior esquerdo)
+            newNodeAnimation.startY = 50; // Posição vertical inicial
             newNodeAnimation.endX = finalX;
             newNodeAnimation.endY = finalY;
             newNodeAnimation.progress = 0.0f;
@@ -205,7 +239,7 @@ void gameLoop() {
             running = false;
         }
         else if (event.type == ALLEGRO_EVENT_DISPLAY_RESIZE) {
-            al_acknowledge_resize(event.display.source);
+            al_acknowledge_resize(event.display.source); // Redimensiona a janela
         }
         else if (event.type == ALLEGRO_EVENT_TIMER) {
             blinkTimer += delta_time; // Atualiza o timer do efeito de piscar
@@ -213,7 +247,7 @@ void gameLoop() {
 
             // Quando a animação terminar, insere o novo nó na árvore
             if (!newNodeAnimation.isAnimating && newNodedata != -1) {
-                avlTree = insert(avlTree, newNodedata, newNodeAnimation.endX, newNodeAnimation.endY);
+                avlTree = insert(avlTree, newNodedata, newNodeAnimation.endX, newNodeAnimation.endY); // Insere o novo nó na árvore
                 newNodedata = -1; // Reseta o valor do novo nó
             }
 

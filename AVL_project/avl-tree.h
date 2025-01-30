@@ -9,13 +9,12 @@
 #include <math.h>
 #include <stdio.h>
 
-// Remove the duplicate Animation structure and keep just one
 typedef struct {
     float startX, startY;
     float endX, endY;
     float progress;
     bool isAnimating;
-} Animation;  // This will be the only animation structure
+} Animation; 
 
 typedef struct sNode {
     int data;
@@ -31,13 +30,11 @@ void updateAnimation(Animation* anim, float delta_time);
 bool animationActive(Node* node);
 void updateTreeAnimations(Node* root, float delta_time, ALLEGRO_EVENT_QUEUE* queue);
 
-// Fun��es de visualiza��o e c�lculo
 void calculateTreePositions(Node* root, float x, float y, float offset);
 void drawTree(Node* root, int highlightValue);
 
-// Fun��es principais da visualiza��o com Allegro
-void initAllegro(); // Inicializa��o do Allegro
-void gameLoop();    // Loop principal do programa
+void initAllegro(); 
+void gameLoop(); 
 void initFont();
 void destroyFont();
 

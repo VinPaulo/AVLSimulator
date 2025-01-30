@@ -154,20 +154,19 @@ Node* removeNode(Node* root, int data) {
 
 bool search(Node* root, int value, char* resultBuffer) {
     if (!root) {
-        sprintf(resultBuffer, "Valor %d não encontrado na árvore.", value);
+        sprintf(resultBuffer, "Valor %d nao encontrado na arvore.", value);
         return false;
     }
 
     if (root->data == value) {
-        sprintf(resultBuffer, "Valor %d encontrado na árvore.", value);
+        sprintf(resultBuffer, "Valor %d encontrado na arvore.", value);
         return true;
     }
 
     if (value < root->data) {
-        return search(root->left, value, resultBuffer); // Busca na subárvore esquerda
-    }
-    else {
-        return search(root->right, value, resultBuffer); // Busca na subárvore direita
+        return search(root->left, value, resultBuffer); // Busca na subarvore esquerda
+    } else {
+        return search(root->right, value, resultBuffer); // Busca na subarvore direita
     }
 }
 
@@ -180,8 +179,7 @@ Node* searchNode(Node* root, int value) {
     }
     if (value < root->data) {
         return searchNode(root->left, value); // Busca na subárvore esquerda
-    }
-    else {
+    } else {
         return searchNode(root->right, value); // Busca na subárvore direita
     }
 }
@@ -218,45 +216,4 @@ void postorder(Node* root, char* buffer) {
     char temp[20];
     sprintf(temp, "%d ", root->data); // Converte o valor do nó para string
     strcat(buffer, temp); // Adiciona o valor ao buffer
-}
-
-void initAnimation(Animation* anim, float startX, float startY, float targetX, float targetY) {
-    anim->startX = startX;
-    anim->startY = startY;
-    anim->endX = targetX;
-    anim->endY = targetY;
-    anim->progress = 0.0f;
-    anim->isAnimating = true;
-}
-
-void updateTreeAnimations(Node* root, float deltaTime, ALLEGRO_EVENT_QUEUE* queue) {
-    if (root != NULL) {
-        // Atualize as animações dos filhos recursivamente
-        updateTreeAnimations(root->left, deltaTime, queue);
-        updateTreeAnimations(root->right, deltaTime, queue);
-
-        // Desenhe a árvore com as posições atualizadas
-        al_clear_to_color(al_map_rgb(0, 0, 0));
-        drawTree(root, -1);
-        al_flip_display();
-
-        // Aguarde um curto período para criar o efeito de animação
-        al_rest(deltaTime);
-    }
-}
-
-void calculateTreePositions(Node* root, float x, float y, float offset) {
-    if (root == NULL) return;
-
-    // Define a posição do nó atual
-    root->x = x;
-    root->y = y;
-
-    // Calcula a posição dos nós filhos
-    if (root->left != NULL) {
-        calculateTreePositions(root->left, x - offset, y + 50, offset / 2);
-    }
-    if (root->right != NULL) {
-        calculateTreePositions(root->right, x + offset, y + 50, offset / 2);
-    }
 }
