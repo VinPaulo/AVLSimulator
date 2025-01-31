@@ -34,6 +34,7 @@ void calculateTreePositions(Node* root, float x, float y, float offset);
 void animate_insertion(Node *root, int data);
 void drawTree(Node* root, int highlightValue);
 void draw_node(float x, float y, int data, bool highlight);
+void highlightNode(Node* root);
 
 void initAllegro(); 
 void gameLoop(); 

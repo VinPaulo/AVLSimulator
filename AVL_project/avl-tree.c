@@ -161,16 +161,17 @@ bool search(Node* root, int value, char* resultBuffer) {
     }
 
     if (root->data == value) {
-        sprintf(resultBuffer, "Valor %d encontrado na arvore.", value); // Converte o valor para string
+        al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(0, 0, 255)); // Azul
+        al_flip_display();
+        al_rest(1.0);
+        
+        sprintf(resultBuffer, "Valor %d encontrado na arvore.", value);
         return true;
     }
 
-    if (value < root->data) {
-        return search(root->left, value, resultBuffer); // Busca na subarvore esquerda
-    } else {
-        return search(root->right, value, resultBuffer); // Busca na subarvore direita
-    }
+    return (value < root->data) ? search(root->left, value, resultBuffer) : search(root->right, value, resultBuffer);
 }
+
 
 Node* searchNode(Node* root, int value) {
     if (root == NULL) {
@@ -193,6 +194,7 @@ void inorder(Node* root, char* buffer) {
 
     char temp[20];
     sprintf(temp, "%d ", root->data); // Converte o valor do nó para string
+    highlightNode(root);
     strcat(buffer, temp); // Adiciona o valor ao buffer
 
     inorder(root->right, buffer); // Percorre a subárvore direita
@@ -205,6 +207,7 @@ void preorder(Node* root, char* buffer) {
     sprintf(temp, "%d ", root->data); // Converte o valor do nó para string
     strcat(buffer, temp); // Adiciona o valor ao buffer
 
+    highlightNode(root);
     preorder(root->left, buffer); // Percorre a subárvore esquerda
     preorder(root->right, buffer); // Percorre a subárvore direita
 }
@@ -214,6 +217,7 @@ void postorder(Node* root, char* buffer) {
 
     postorder(root->left, buffer); // Percorre a subárvore esquerda
     postorder(root->right, buffer); // Percorre a subárvore direita
+    highlightNode(root);
 
     char temp[20];
     sprintf(temp, "%d ", root->data); // Converte o valor do nó para string

@@ -21,32 +21,26 @@ void displayMenu() {
 }
 
 void drawTextOnScreen(const char* text, int y, ALLEGRO_FONT* font, int previewValue, int tipo) {
-    // Desenha o texto da travessia
     al_draw_text(font, al_map_rgb(255, 255, 255), 10, y, ALLEGRO_ALIGN_LEFT, text);
     
-    // Desenha o preview do nó se houver um valor válido
     if (previewValue != -1) {
-        // Posiciona o círculo no canto superior esquerdo
         float previewX = 50;
         float previewY = 50;
         
-        // Desenha o círculo branco
         al_draw_filled_circle(previewX, previewY, 20, al_map_rgb(255, 255, 255));
         
-        // Desenha o número dentro do círculo
         char buffer[10];
         sprintf(buffer, "%d", previewValue);
         al_draw_text(font, al_map_rgb(0, 0, 0), previewX, previewY - 10, ALLEGRO_ALIGN_CENTER, buffer);
-        
-        // Opcional: Adiciona um texto explicativo
+    
         if(tipo == 0){
-            al_draw_text(font, al_map_rgb(255, 255, 255), previewX + 40, previewY - 10, 
+            al_draw_text(font, al_map_rgb(255, 255, 255), previewX + 40, previewY - 20, 
                     ALLEGRO_ALIGN_LEFT, "Valor a ser inserido");
         }else if (tipo == 1){
-            al_draw_text(font, al_map_rgb(255, 255, 255), previewX + 40, previewY - 10, 
+            al_draw_text(font, al_map_rgb(255, 255, 255), previewX + 40, previewY - 20, 
                     ALLEGRO_ALIGN_LEFT, "Valor a ser removido");       
     }else if (tipo == 2){
-            al_draw_text(font, al_map_rgb(255, 255, 255), previewX + 40, previewY - 10, 
+            al_draw_text(font, al_map_rgb(255, 255, 255), previewX + 40, previewY - 20, 
                     ALLEGRO_ALIGN_LEFT, "Valor a ser buscado");       
     }
     }
@@ -148,24 +142,24 @@ int main() {
                 
             // Insere o valor e atualiza a árvore
             highlightValue = value;
-            root = insert(root, value, SCREEN_WIDTH / 2, 50);
-            calculateTreePositions(root, SCREEN_WIDTH / 2, 50, SCREEN_WIDTH / 4);
+            root = insert(root, value, SCREEN_WIDTH / 2, 100); // Ajuste a posição Y para 100
+            calculateTreePositions(root, SCREEN_WIDTH / 2, 100, SCREEN_WIDTH / 8); // Ajuste a posição Y para 100 e diminua o offset
             previewValue = -1; // Limpa o preview
             break;
 
         case 2:
             printf("Digite o valor para remover: ");
             scanf("%d", &value);
-            
-            // Preview do nó a ser removido
+        
             previewValue = value;
             
             // Mostra o preview por 1 segundo
             preview_time = 1.0;
             elapsed = 0.0;
+
             while (elapsed < preview_time) {
                 al_clear_to_color(al_map_rgb(0, 0, 0));
-                drawTextOnScreen("Nó a ser removido:", 30, font, previewValue, 1);
+                drawTextOnScreen("", 80, font, previewValue, 1);
                 type = 1;
                 drawTree(root, value); // Destaca o nó na árvore
                 al_flip_display();
@@ -177,7 +171,7 @@ int main() {
             // Remove o nó e atualiza a árvore
             root = removeNode(root, value);
             printf("Valor %d removido.\n", value);
-            calculateTreePositions(root, SCREEN_WIDTH / 2, 50, SCREEN_WIDTH / 4);
+            calculateTreePositions(root, SCREEN_WIDTH / 2, 100, SCREEN_WIDTH / 8); // Ajuste a posição Y para 100 e diminua o offset
             previewValue = -1; // Limpa o preview
             break;
 
@@ -200,7 +194,7 @@ int main() {
                 elapsed = 0.0;
                 while (elapsed < preview_time) {
                     al_clear_to_color(al_map_rgb(0, 0, 0));
-                    drawTextOnScreen(searchResult, 50, font, highlightValue,2);
+                    drawTextOnScreen(searchResult, 80, font, highlightValue,2);
                     type = 2;
                     drawTree(root, highlightValue);
                     al_flip_display();

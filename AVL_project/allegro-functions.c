@@ -222,6 +222,17 @@ void drawNewNode() { // Desenha os nós
     }
 }
 
+void highlightNode(Node* root){
+    for (int i = 0; i < 3; i++) { // Pisca 3 vezes
+        al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 255, 0));
+        al_flip_display();
+        al_rest(0.3);
+
+        al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 255, 255)); 
+        al_flip_display();
+        al_rest(0.3);
+    }
+}
 // ESSA FUNÇÃO PODE SER MODIFICADA PARA FAZER O DESTAQUE DOS NÓS??  (Sim, pesquisar como depois)
 void updateAnimation(Animation* anim, float delta_time) { // Atualiza a animação
     if (anim->isAnimating) {
