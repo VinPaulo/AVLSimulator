@@ -46,6 +46,81 @@ void drawTextOnScreen(const char* text, int y, ALLEGRO_FONT* font, int previewVa
     }
 }
 
+void blinkNode(Node* node, ALLEGRO_FONT* font) {
+    if (node) {
+        for (int i = 0; i < 3; i++) { // Blink 3 times
+            al_draw_filled_circle(node->x, node->y, 20, al_map_rgb(255, 255, 0)); // Yellow
+            char buffer[10];
+            sprintf(buffer, "%d", node->data);
+            al_draw_text(font, al_map_rgb(0, 0, 0), node->x, node->y - 10, ALLEGRO_ALIGN_CENTER, buffer);
+            al_flip_display();
+            al_rest(0.3);
+
+            al_draw_filled_circle(node->x, node->y, 20, al_map_rgb(255, 255, 255)); // White
+            al_draw_text(font, al_map_rgb(0, 0, 0), node->x, node->y - 10, ALLEGRO_ALIGN_CENTER, buffer);
+            al_flip_display();
+            al_rest(0.3);
+        }
+    }
+}
+
+void inorderWithBlink(Node* root, char* buffer, ALLEGRO_FONT* font) {
+    if (!root) return;
+    inorderWithBlink(root->left, buffer, font);
+    char temp[20];
+    sprintf(temp, "%d ", root->data);
+    strcat(buffer, temp);
+    blinkNode(root, font);
+    inorderWithBlink(root->right, buffer, font);
+}
+
+void preorderWithBlink(Node* root, char* buffer, ALLEGRO_FONT* font) {
+    if (!root) return;
+    char temp[20];
+    sprintf(temp, "%d ", root->data);
+    strcat(buffer, temp);
+    blinkNode(root, font);
+    preorderWithBlink(root->left, buffer, font);
+    preorderWithBlink(root->right, buffer, font);
+}
+
+void postorderWithBlink(Node* root, char* buffer, ALLEGRO_FONT* font) {
+    if (!root) return;
+    postorderWithBlink(root->left, buffer, font);
+    postorderWithBlink(root->right, buffer, font);
+    char temp[20];
+    sprintf(temp, "%d ", root->data);
+    strcat(buffer, temp);
+    blinkNode(root, font);
+}
+
+bool searchWithBlink(Node* root, int value, char* resultBuffer, ALLEGRO_FONT* font) {
+    if (!root) {
+        sprintf(resultBuffer, "Valor %d nao encontrado na arvore.", value);
+        return false;
+    }
+
+    if (root->data == value) {
+        for (int i = 0; i < 3; i++) { // Blink 3 times
+            al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 255, 0)); // Yellow
+            char buffer[10];
+            sprintf(buffer, "%d", root->data);
+            al_draw_text(font, al_map_rgb(0, 0, 0), root->x, root->y - 10, ALLEGRO_ALIGN_CENTER, buffer);
+            al_flip_display();
+            al_rest(0.3);
+
+            al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 255, 255)); // White
+            al_draw_text(font, al_map_rgb(0, 0, 0), root->x, root->y - 10, ALLEGRO_ALIGN_CENTER, buffer);
+            al_flip_display();
+            al_rest(0.3);
+        }
+        sprintf(resultBuffer, "Valor %d encontrado na arvore.", value);
+        return true;
+    }
+
+    return (value < root->data) ? searchWithBlink(root->left, value, resultBuffer, font) : searchWithBlink(root->right, value, resultBuffer, font);
+}
+
 int main() {
     if (!al_init()) {
         fprintf(stderr, "Erro ao inicializar o Allegro.\n");
@@ -180,7 +255,7 @@ int main() {
             scanf("%d", &value);
 
             char searchResult[100];
-            if (search(root, value, searchResult)) {
+            if (searchWithBlink(root, value, searchResult, font)) {
                 printf("%s\n", searchResult);
                 highlightValue = value;
             } else {
@@ -194,7 +269,7 @@ int main() {
                 elapsed = 0.0;
                 while (elapsed < preview_time) {
                     al_clear_to_color(al_map_rgb(0, 0, 0));
-                    drawTextOnScreen(searchResult, 80, font, highlightValue,2);
+                    drawTextOnScreen(searchResult, 80, font, highlightValue, 2);
                     type = 2;
                     drawTree(root, highlightValue);
                     al_flip_display();
@@ -209,22 +284,22 @@ int main() {
         }
         case 4:
             printf("Exibindo arvore em ordem:\n");
-            traversalText[0] = '\0'; // Limpa o buffer
-            inorder(root, traversalText); // Passa o buffer para a funcao inorder
+            traversalText[0] = '\0';
+            inorderWithBlink(root, traversalText, font);
             printf("%s\n", traversalText);
             break;
 
         case 5:
             printf("Exibindo arvore em pre-ordem:\n");
-            traversalText[0] = '\0'; // Limpa o buffer
-            preorder(root, traversalText); // Passa o buffer para a funcao preorder
+            traversalText[0] = '\0';
+            preorderWithBlink(root, traversalText, font);
             printf("%s\n", traversalText);
             break;
 
         case 6:
             printf("Exibindo arvore em pos-ordem:\n");
-            traversalText[0] = '\0'; // Limpa o buffer
-            postorder(root, traversalText); // Passa o buffer para a funcao postorder
+            traversalText[0] = '\0';
+            postorderWithBlink(root, traversalText, font);
             printf("%s\n", traversalText);
             break;
 

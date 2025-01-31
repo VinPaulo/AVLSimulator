@@ -222,17 +222,15 @@ void drawNewNode() { // Desenha os nós
     }
 }
 
-void highlightNode(Node* root){
-    for (int i = 0; i < 3; i++) { // Pisca 3 vezes
-        al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 255, 0));
-        al_flip_display();
-        al_rest(0.3);
-
-        al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 255, 255)); 
-        al_flip_display();
-        al_rest(0.3);
+void highlightNode(Node* root) {
+    if (root != NULL) {
+        al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 255, 0)); // Amarelo para nós destacados
+        char value_str[10];
+        sprintf(value_str, "%d", root->data);
+        al_draw_text(font, al_map_rgb(0, 0, 0), root->x, root->y - 10, ALLEGRO_ALIGN_CENTER, value_str); // Use a variável global 'font'
     }
 }
+
 // ESSA FUNÇÃO PODE SER MODIFICADA PARA FAZER O DESTAQUE DOS NÓS??  (Sim, pesquisar como depois)
 void updateAnimation(Animation* anim, float delta_time) { // Atualiza a animação
     if (anim->isAnimating) {
