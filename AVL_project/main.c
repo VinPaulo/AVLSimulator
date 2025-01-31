@@ -101,16 +101,16 @@ bool searchWithBlink(Node* root, int value, char* resultBuffer, ALLEGRO_FONT* fo
     }
 
     if (root->data == value) {
-        for (int i = 0; i < 3; i++) { // Blink 3 times
-            al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 255, 0)); // Yellow
+        for (int i = 0; i < 2; i++) { // Piscar o negócio duas vezes
+            al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 255, 0));
             char buffer[10];
             sprintf(buffer, "%d", root->data);
-            al_draw_text(font, al_map_rgb(0, 0, 0), root->x, root->y - 10, ALLEGRO_ALIGN_CENTER, buffer);
+            al_draw_text(font, al_map_rgb(0, 0, 0), root->x, root->y - 10, ALLEGRO_ALIGN_CENTER, buffer); // O valor do nó será desenhado (-10 o nó fica mais pra cima)
             al_flip_display();
             al_rest(0.3);
 
-            al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 255, 255)); // White
-            al_draw_text(font, al_map_rgb(0, 0, 0), root->x, root->y - 10, ALLEGRO_ALIGN_CENTER, buffer);
+            al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 255, 255)); 
+            al_draw_text(font, al_map_rgb(0, 0, 0), root->x, root->y - 10, ALLEGRO_ALIGN_CENTER, buffer); // Mesma coisa da função de cima (após parar de piscar o elemento dentro do nó volta para a posição central)
             al_flip_display();
             al_rest(0.3);
         }
@@ -118,7 +118,7 @@ bool searchWithBlink(Node* root, int value, char* resultBuffer, ALLEGRO_FONT* fo
         return true;
     }
 
-    return (value < root->data) ? searchWithBlink(root->left, value, resultBuffer, font) : searchWithBlink(root->right, value, resultBuffer, font);
+    return (value < root->data) ? searchWithBlink(root->left, value, resultBuffer, font) : searchWithBlink(root->right, value, resultBuffer, font); // Se o valor for menor que o ponteiro da raíz está apontando imprime o lado esquerdo, caso contrário imprime o direito
 }
 
 int main() {
@@ -185,7 +185,7 @@ int main() {
 
     al_start_timer(timer);
 
-    char traversalText[1024] = ""; // Buffer para armazenar o texto da travessia
+    char traversalText[1024] = ""; // Buffer para armazenar o texto da travessia (buffer, local onde armazena temporariamente)
 
     while (running) {
         displayMenu();
