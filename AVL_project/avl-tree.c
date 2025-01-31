@@ -172,7 +172,7 @@ bool search(Node* root, int value, char* resultBuffer) {
     return (value < root->data) ? search(root->left, value, resultBuffer) : search(root->right, value, resultBuffer);
 }
 
-
+/*
 Node* searchNode(Node* root, int value) {
     if (root == NULL) {
         return NULL; // Valor nao encontrado
@@ -185,7 +185,7 @@ Node* searchNode(Node* root, int value) {
     } else {
         return searchNode(root->right, value); // Busca na subarvore direita
     }
-}
+}*/
 
 void inorder(Node* root, char* buffer) {
     if (!root) return;

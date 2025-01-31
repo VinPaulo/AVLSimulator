@@ -141,7 +141,7 @@ int main() {
         fprintf(stderr, "Erro ao inicializar o addon de fontes.\n");
         return -1;
     }
-
+    
     const int SCREEN_WIDTH = 800;
     const int SCREEN_HEIGHT = 600;
     const float FPS = 60.0;
@@ -202,7 +202,7 @@ int main() {
                 
             // Mostra o preview por 1 segundo
             float preview_time = 1.0;
-            float elapsed = 0.0;
+            float elapsed = 0.0; // Tempo decorrido
             while (elapsed < preview_time) {
                 // Renderiza a tela com o preview
                 al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -212,7 +212,7 @@ int main() {
                 al_flip_display();
                     
                 al_rest(0.016); // ~60 FPS
-                elapsed += 0.016;
+                elapsed += 0.016; // Incrementa o tempo
             }
                 
             // Insere o valor e atualiza a árvore

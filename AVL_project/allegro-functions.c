@@ -60,7 +60,7 @@ void initAllegro() {
         exit(EXIT_FAILURE);
     }
 
-    al_set_new_display_flags(ALLEGRO_RESIZABLE); // Janela adaptável (Conforme crescimento da árvore)
+    //al_set_new_display_flags(ALLEGRO_RESIZABLE); // Janela adaptável (Conforme crescimento da árvore)
     al_resize_display(display, SCREEN_WIDTH, SCREEN_HEIGHT); // Janalea com tamanho inicial
 
     timer = al_create_timer(1.0 / 60.0); // 60 FPS
