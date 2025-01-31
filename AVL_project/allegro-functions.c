@@ -107,17 +107,29 @@ void updateTreeAnimations(Node* root, float delta_time, ALLEGRO_EVENT_QUEUE* que
     }
 }
 
-void calculateTreePositions(Node* root, float x, float y, float offset) {
+void calculateTreePositions(Node* root, float x, float y, float offset, int depth) {
     if (root == NULL) return;
 
     root->x = x; // Posição horizontal do nó
     root->y = y; // Posição vertical do nó
 
+    // Aumenta o espaçamento após a segunda fileira
+    if (depth > 1) {
+        offset *= 1.5; // Ajuste o fator de multiplicação conforme necessário
+    }
+
     if (root->left != NULL) {
-        calculateTreePositions(root->left, x - offset, y + 50, offset / 2); // Posição que a subárvore esquerda vai ficar
+        calculateTreePositions(root->left, x - offset, y + 50, offset / 2, depth + 1); // Posição que a subárvore esquerda vai ficar
     }
     if (root->right != NULL) {
-        calculateTreePositions(root->right, x + offset, y + 50, offset / 2); // Mesma coisa só que para a direita 
+        calculateTreePositions(root->right, x + offset, y + 50, offset / 2, depth + 1); // Mesma coisa só que para a direita 
+    }
+}
+
+void resizeTree(Node* root, int screenWidth, int screenHeight) {
+    (void)screenHeight; // Evita o aviso de parâmetro não utilizado
+    if (root != NULL) {
+        calculateTreePositions(root, screenWidth / 2, 100, screenWidth / 4, 0);
     }
 }
 
@@ -275,6 +287,7 @@ void gameLoop() {
         }
         else if (event.type == ALLEGRO_EVENT_DISPLAY_RESIZE) {
             al_acknowledge_resize(event.display.source); // Redimensiona a janela
+            resizeTree(avlTree, event.display.width, event.display.height); // Recalcula as posições dos nós
         }
         else if (event.type == ALLEGRO_EVENT_TIMER) {
             blinkTimer += delta_time; // Atualiza o timer do efeito de piscar
