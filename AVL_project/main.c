@@ -31,7 +31,7 @@ void drawTextOnScreen(const char* text, int y, ALLEGRO_FONT* font, int previewVa
         
         char buffer[10];
         sprintf(buffer, "%d", previewValue);
-        al_draw_text(font, al_map_rgb(0, 0, 0), previewX, previewY - 10, ALLEGRO_ALIGN_CENTER, buffer); // Desenha o valor do nó
+        al_draw_text(font, al_map_rgb(0, 0, 0), previewX, previewY - 0, ALLEGRO_ALIGN_CENTER, buffer); // Desenha o valor do nó
     
         if(tipo == 0){
             al_draw_text(font, al_map_rgb(255, 255, 255), previewX + 40, previewY - 20, // Desenhar o texto (+40 espaçamento no horizontal e -20 no vertical) 
@@ -52,12 +52,12 @@ void blinkNode(Node* node, ALLEGRO_FONT* font) {
             al_draw_filled_circle(node->x, node->y, 20, al_map_rgb(255, 255, 0)); 
             char buffer[10];
             sprintf(buffer, "%d", node->data);
-            al_draw_text(font, al_map_rgb(0, 0, 0), node->x, node->y - 10, ALLEGRO_ALIGN_CENTER, buffer);
+            al_draw_text(font, al_map_rgb(0, 0, 0), node->x, node->y - 0, ALLEGRO_ALIGN_CENTER, buffer);
             al_flip_display();
             al_rest(0.3);
 
             al_draw_filled_circle(node->x, node->y, 20, al_map_rgb(255, 255, 255)); 
-            al_draw_text(font, al_map_rgb(0, 0, 0), node->x, node->y - 10, ALLEGRO_ALIGN_CENTER, buffer);
+            al_draw_text(font, al_map_rgb(0, 0, 0), node->x, node->y - 0, ALLEGRO_ALIGN_CENTER, buffer);
             al_flip_display();
             al_rest(0.3);
         }
@@ -105,12 +105,12 @@ bool searchWithBlink(Node* root, int value, char* resultBuffer, ALLEGRO_FONT* fo
             al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 255, 0));
             char buffer[10];
             sprintf(buffer, "%d", root->data);
-            al_draw_text(font, al_map_rgb(0, 0, 0), root->x, root->y - 10, ALLEGRO_ALIGN_CENTER, buffer); // O valor do nó será desenhado (-10 o nó fica mais pra cima)
+            al_draw_text(font, al_map_rgb(0, 0, 0), root->x, root->y - 0, ALLEGRO_ALIGN_CENTER, buffer); // O valor do nó será desenhado (-10 o nó fica mais pra cima)
             al_flip_display();
             al_rest(0.3);
 
             al_draw_filled_circle(root->x, root->y, 20, al_map_rgb(255, 255, 255)); 
-            al_draw_text(font, al_map_rgb(0, 0, 0), root->x, root->y - 10, ALLEGRO_ALIGN_CENTER, buffer); // Mesma coisa da função de cima (após parar de piscar o elemento dentro do nó volta para a posição central)
+            al_draw_text(font, al_map_rgb(0, 0, 0), root->x, root->y - 0, ALLEGRO_ALIGN_CENTER, buffer); // Mesma coisa da função de cima (após parar de piscar o elemento dentro do nó volta para a posição central)
             al_flip_display();
             al_rest(0.3);
         }
