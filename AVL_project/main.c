@@ -27,20 +27,20 @@ void drawTextOnScreen(const char* text, int y, ALLEGRO_FONT* font, int previewVa
         float previewX = 50;
         float previewY = 50;
         
-        al_draw_filled_circle(previewX, previewY, 20, al_map_rgb(255, 255, 255));
+        al_draw_filled_circle(previewX, previewY, 20, al_map_rgb(255, 255, 255)); 
         
         char buffer[10];
         sprintf(buffer, "%d", previewValue);
-        al_draw_text(font, al_map_rgb(0, 0, 0), previewX, previewY - 10, ALLEGRO_ALIGN_CENTER, buffer);
+        al_draw_text(font, al_map_rgb(0, 0, 0), previewX, previewY - 10, ALLEGRO_ALIGN_CENTER, buffer); // Desenha o valor do nó
     
         if(tipo == 0){
-            al_draw_text(font, al_map_rgb(255, 255, 255), previewX + 40, previewY - 20, 
+            al_draw_text(font, al_map_rgb(255, 255, 255), previewX + 40, previewY - 20, // Desenhar o texto (+40 espaçamento no horizontal e -20 no vertical) 
                     ALLEGRO_ALIGN_LEFT, "Valor a ser inserido");
         }else if (tipo == 1){
-            al_draw_text(font, al_map_rgb(255, 255, 255), previewX + 40, previewY - 20, 
+            al_draw_text(font, al_map_rgb(255, 255, 255), previewX + 40, previewY - 20, // Mesma coisa 
                     ALLEGRO_ALIGN_LEFT, "Valor a ser removido");       
     }else if (tipo == 2){
-            al_draw_text(font, al_map_rgb(255, 255, 255), previewX + 40, previewY - 20, 
+            al_draw_text(font, al_map_rgb(255, 255, 255), previewX + 40, previewY - 20, // The same thing 
                     ALLEGRO_ALIGN_LEFT, "Valor a ser buscado");       
     }
     }
@@ -48,15 +48,15 @@ void drawTextOnScreen(const char* text, int y, ALLEGRO_FONT* font, int previewVa
 
 void blinkNode(Node* node, ALLEGRO_FONT* font) {
     if (node) {
-        for (int i = 0; i < 3; i++) { // Blink 3 times
-            al_draw_filled_circle(node->x, node->y, 20, al_map_rgb(255, 255, 0)); // Yellow
+        for (int i = 0; i < 2; i++) { // Pisca o negócio 2 vezes
+            al_draw_filled_circle(node->x, node->y, 20, al_map_rgb(255, 255, 0)); 
             char buffer[10];
             sprintf(buffer, "%d", node->data);
             al_draw_text(font, al_map_rgb(0, 0, 0), node->x, node->y - 10, ALLEGRO_ALIGN_CENTER, buffer);
             al_flip_display();
             al_rest(0.3);
 
-            al_draw_filled_circle(node->x, node->y, 20, al_map_rgb(255, 255, 255)); // White
+            al_draw_filled_circle(node->x, node->y, 20, al_map_rgb(255, 255, 255)); 
             al_draw_text(font, al_map_rgb(0, 0, 0), node->x, node->y - 10, ALLEGRO_ALIGN_CENTER, buffer);
             al_flip_display();
             al_rest(0.3);
@@ -66,7 +66,7 @@ void blinkNode(Node* node, ALLEGRO_FONT* font) {
 
 void inorderWithBlink(Node* root, char* buffer, ALLEGRO_FONT* font) {
     if (!root) return;
-    inorderWithBlink(root->left, buffer, font);
+    inorderWithBlink(root->left, buffer, font); // Mesma coisa da função de baixo
     char temp[20];
     sprintf(temp, "%d ", root->data);
     strcat(buffer, temp);
@@ -77,7 +77,7 @@ void inorderWithBlink(Node* root, char* buffer, ALLEGRO_FONT* font) {
 void preorderWithBlink(Node* root, char* buffer, ALLEGRO_FONT* font) {
     if (!root) return;
     char temp[20];
-    sprintf(temp, "%d ", root->data);
+    sprintf(temp, "%d ", root->data); // Mesma coisa da função de baixo
     strcat(buffer, temp);
     blinkNode(root, font);
     preorderWithBlink(root->left, buffer, font);
@@ -86,12 +86,12 @@ void preorderWithBlink(Node* root, char* buffer, ALLEGRO_FONT* font) {
 
 void postorderWithBlink(Node* root, char* buffer, ALLEGRO_FONT* font) {
     if (!root) return;
-    postorderWithBlink(root->left, buffer, font);
-    postorderWithBlink(root->right, buffer, font);
+    postorderWithBlink(root->left, buffer, font); // Percorre a subárvore esquerda
+    postorderWithBlink(root->right, buffer, font); // Mesma coisa para a direita
     char temp[20];
-    sprintf(temp, "%d ", root->data);
-    strcat(buffer, temp);
-    blinkNode(root, font);
+    sprintf(temp, "%d ", root->data); 
+    strcat(buffer, temp); // Adiciona o valor ao buffer (buffer = local de armazenamento temporário)
+    blinkNode(root, font); // Pisca o nó
 }
 
 bool searchWithBlink(Node* root, int value, char* resultBuffer, ALLEGRO_FONT* font) {
